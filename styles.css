@@ -14,10 +14,10 @@
   --text-secondary: #8888a0;
   --text-muted: #555570;
 
-  --accent-primary: #7c5cfc;
-  --accent-secondary: #5c8cfc;
-  --accent-gradient: linear-gradient(135deg, #7c5cfc 0%, #5c8cfc 50%, #5cfcc4 100%);
-  --accent-glow: rgba(124, 92, 252, 0.25);
+  --accent-primary: #22c55e;
+  --accent-secondary: #eab308;
+  --accent-gradient: linear-gradient(135deg, #22c55e 0%, #65a30d 50%, #eab308 100%);
+  --accent-glow: rgba(34, 197, 94, 0.25);
 
   --grade-a: #22d68a;
   --grade-b: #5cfcc4;
@@ -30,7 +30,7 @@
   --danger-hover: rgba(252, 92, 106, 0.2);
 
   --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-focus: rgba(124, 92, 252, 0.5);
+  --border-focus: rgba(34, 197, 94, 0.5);
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -131,7 +131,7 @@ body {
 .orb-3 {
   width: 300px;
   height: 300px;
-  background: #5cfcc4;
+  background: #84cc16;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -378,7 +378,7 @@ body {
 .input-group input:focus {
   background: var(--bg-input-focus);
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15), var(--shadow-input);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15), var(--shadow-input);
 }
 
 .input-group input:invalid:not(:placeholder-shown) {
@@ -418,7 +418,7 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(124, 92, 252, 0.35);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.35);
 }
 
 .btn-primary:hover::before {

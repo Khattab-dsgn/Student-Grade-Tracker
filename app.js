@@ -154,7 +154,7 @@
     // Color the ring based on average grade
     var letter = getLetterGrade(avg);
     var colorMap = { A: '#22d68a', B: '#5cfcc4', C: '#fcc75c', D: '#fc9e5c', F: '#fc5c6a' };
-    ringProgress.setAttribute('stroke', colorMap[letter] || '#7c5cfc');
+    ringProgress.setAttribute('stroke', colorMap[letter] || '#22c55e');
   }
 
   // ── Rendering ─────────────────────────────────────────────────────
