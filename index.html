@@ -3,14 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Student Grade Tracker — Track your courses and scores with a live-calculated average. Persistent data with local storage.">
-  <title>Student Grade Tracker</title>
+  <meta name="description" content="GradeFlow — Beautifully track your courses and scores with live-calculated averages. Data persists in your browser.">
+  <title>GradeFlow — Student Grade Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Hidden SVG definitions for reusable gradients -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#22c55e" />
+        <stop offset="100%" stop-color="#eab308" />
+      </linearGradient>
+    </defs>
+  </svg>
+
   <div class="app-container">
     <!-- Ambient background orbs -->
     <div class="orb orb-1" aria-hidden="true"></div>
@@ -26,41 +36,51 @@
       <p class="tagline">Track your academic progress beautifully</p>
     </header>
 
+    <!-- Session Bar -->
+    <section class="session-bar" aria-label="Session management">
+      <div class="session-controls">
+        <label for="session-select" class="session-label">Session</label>
+        <select id="session-select" class="session-select" aria-label="Select session"></select>
+        <button id="new-session-btn" class="btn-secondary" title="Create a new session">+ New</button>
+        <button id="results-btn" class="btn-secondary" title="View results from all sessions">📊 Results</button>
+      </div>
+    </section>
+
     <!-- Stats Dashboard -->
     <section class="stats-dashboard" aria-label="Grade statistics">
       <div class="stat-card stat-average">
-        <div class="stat-icon" aria-hidden="true">🎯</div>
-        <div class="stat-info">
-          <span class="stat-label">Average Score</span>
-          <span class="stat-value" id="average-score">—</span>
-        </div>
         <div class="stat-ring" id="stat-ring">
           <svg viewBox="0 0 100 100" aria-hidden="true">
             <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
-            <circle class="ring-progress" id="ring-progress" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="263.9"></circle>
+            <circle class="ring-progress" id="ring-progress" cx="50" cy="50" r="42"
+              stroke-dasharray="263.9" stroke-dashoffset="263.9"></circle>
           </svg>
           <span class="ring-text" id="ring-text">—</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="average-score">—</span>
+          <span class="stat-label">Average Score</span>
         </div>
       </div>
       <div class="stat-card stat-total">
         <div class="stat-icon" aria-hidden="true">📚</div>
         <div class="stat-info">
-          <span class="stat-label">Total Courses</span>
           <span class="stat-value" id="total-courses">0</span>
+          <span class="stat-label">Total Courses</span>
         </div>
       </div>
       <div class="stat-card stat-highest">
         <div class="stat-icon" aria-hidden="true">🏆</div>
         <div class="stat-info">
-          <span class="stat-label">Highest Score</span>
           <span class="stat-value" id="highest-score">—</span>
+          <span class="stat-label">Highest Score</span>
         </div>
       </div>
       <div class="stat-card stat-lowest">
         <div class="stat-icon" aria-hidden="true">📉</div>
         <div class="stat-info">
-          <span class="stat-label">Lowest Score</span>
           <span class="stat-value" id="lowest-score">—</span>
+          <span class="stat-label">Lowest Score</span>
         </div>
       </div>
     </section>
@@ -68,7 +88,10 @@
     <!-- Add Course Form -->
     <section class="form-section" aria-label="Add a new course">
       <div class="form-card">
-        <h2 class="form-title">Add New Course</h2>
+        <h2 class="form-title">
+          <span class="form-title-icon" aria-hidden="true">✏️</span>
+          Add New Course
+        </h2>
         <form id="grade-form" autocomplete="off">
           <div class="form-row">
             <div class="input-group">
@@ -81,7 +104,7 @@
                 required
               >
             </div>
-            <div class="input-group">
+            <div class="input-group input-group-score">
               <label for="course-score">Score (0–100)</label>
               <input
                 type="number"
@@ -106,9 +129,22 @@
     <section class="list-section" aria-label="Course list">
       <div class="list-header">
         <h2 class="list-title">Your Courses</h2>
-        <button id="clear-all-btn" class="btn-danger" style="display:none;">
-          Clear All
-        </button>
+        <div class="list-actions">
+          <div class="search-wrapper" id="search-wrapper" style="display:none;">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Search courses…"
+              maxlength="100"
+              aria-label="Search courses"
+            >
+          </div>
+          <button id="clear-all-btn" class="btn-danger" style="display:none;">
+            Clear All
+          </button>
+        </div>
       </div>
       <div class="course-list" id="course-list">
         <!-- Empty state -->
@@ -119,6 +155,37 @@
         </div>
       </div>
     </section>
+
+    <!-- Session Results Modal -->
+    <div class="modal-overlay" id="results-modal" style="display:none;" role="dialog" aria-modal="true" aria-label="Session results">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2 class="modal-title">📊 Session Results</h2>
+          <button id="results-close-btn" class="modal-close" aria-label="Close results">&times;</button>
+        </div>
+        <div class="modal-body" id="results-body">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- New Session Dialog -->
+    <div class="modal-overlay" id="new-session-modal" style="display:none;" role="dialog" aria-modal="true" aria-label="New session">
+      <div class="modal-box modal-box-sm">
+        <div class="modal-header">
+          <h2 class="modal-title">📁 New Session</h2>
+          <button id="new-session-close-btn" class="modal-close" aria-label="Cancel">&times;</button>
+        </div>
+        <div class="modal-body">
+          <label for="new-session-name" class="dialog-label">Session Name</label>
+          <input type="text" id="new-session-name" class="dialog-input" placeholder="e.g. Fall 2025" maxlength="100">
+          <div class="dialog-actions" style="margin-top: var(--space-lg); padding: 0;">
+            <button id="new-session-cancel-btn" class="dialog-cancel">Cancel</button>
+            <button id="new-session-create-btn" class="btn-primary" style="padding: 0.65rem 1.3rem;">Create Session</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Toast container -->
     <div class="toast-container" id="toast-container" aria-live="polite"></div>
